@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resilience Agent | Team Optimus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        darker: '#0b1120',
+                        panel: '#1e293b',
+                        aws: '#ff9900',
+                        primary: '#3b82f6',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b1120; color: #f8fafc; }
+        .log-container { scroll-behavior: smooth; }
+        .log-entry { opacity: 0; animation: fadeIn 0.3s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* Custom scrollbar for logs */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .pulse { animation: pulse-animation 2s infinite; }
+        @keyframes pulse-animation { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 md:p-6 gap-6">
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row justify-between items-center bg-panel p-4 rounded-xl shadow-lg border border-slate-700">
+        <div class="flex items-center gap-4">
+            <div class="bg-blue-900 p-3 rounded-lg text-blue-400">
+                <i class="fa-solid fa-water text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Integrated Water & Grid Resilience Agent</h1>
+                <p class="text-slate-400 text-sm">Team Optimus | Bharat Builds Tour '26 | Track 02</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 mt-4 md:mt-0">
+            <span class="bg-slate-800 text-aws border border-aws px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase">
+                <i class="fa-brands fa-aws mr-1"></i> Strands Agent SDK
+            </span>
+            <button id="startDemoBtn" onclick="startDemo()" class="bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> Run Hackathon Demo
+            </button>
+        </div>
+    </header>
+
+    <!-- Top Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-panel p-4 rounded-xl shadow border border-slate-700 flex items-center gap-4">
+            <div class="p-3 bg-emerald-900/50 text-emerald-400 rounded-lg"><i class="fa-solid fa-check-circle"></i></div>
+            <div><p class="text-xs text-slate-400 uppercase">System Status</p><p class="text-lg font-bold text-emerald-400" id="sysStatus">ONLINE</p></div>
+        </div>
+        <div class="bg-panel p-4 rounded-xl shadow border border-slate-700 flex items-center gap-4">
+            <div class="p-3 bg-red-900/50 text-red-400 rounded-lg"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div><p class="text-xs text-slate-400 uppercase">Active Incidents</p><p class="text-xl font-bold" id="activeIncidents">0</p></div>
+        </div>
+        <div class="bg-panel p-4 rounded-xl shadow border border-slate-700 flex items-center gap-4">
+            <div class="p-3 bg-blue-900/50 text-blue-400 rounded-lg"><i class="fa-solid fa-droplet"></i></div>
+            <div><p class="text-xs text-slate-400 uppercase">Current Flow (L/min)</p><p class="text-xl font-bold" id="currentFlow">18.4</p></div>
+        </div>
+        <div class="bg-panel p-4 rounded-xl shadow border border-slate-700 flex items-center gap-4 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-emerald-600/20 to-transparent"></div>
+            <div class="p-3 bg-emerald-500 text-white rounded-lg z-10"><i class="fa-solid fa-leaf"></i></div>
+            <div class="z-10"><p class="text-xs text-slate-300 uppercase">Water Saved Today</p><p class="text-2xl font-bold text-white"><span id="waterSaved">0</span> L</p></div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+        
+        <!-- Left Col: Graph & Map -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+            <!-- Graph Panel -->
+            <div class="bg-panel rounded-xl shadow-lg border border-slate-700 p-4 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold flex items-center gap-2"><i class="fa-solid fa-chart-line text-primary"></i> Live Telemetry (BLDG-04 Riser Line)</h2>
+                    <span id="chartStatusBadge" class="text-xs px-2 py-1 bg-emerald-900/50 text-emerald-400 rounded-full border border-emerald-800">Normal Baseline</span>
+                </div>
+                <div class="flex-grow w-full h-64 relative">
+                    <canvas id="telemetryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Work Orders Panel -->
+            <div class="bg-panel rounded-xl shadow-lg border border-slate-700 p-4">
+                <h2 class="text-lg font-semibold flex items-center gap-2 mb-4"><i class="fa-solid fa-clipboard-list text-warning"></i> Active Work Orders</h2>
+                <div id="workOrdersContainer" class="flex flex-col gap-3">
+                    <div class="text-center text-slate-500 py-6 border-2 border-dashed border-slate-700 rounded-lg">
+                        <i class="fa-solid fa-check-double text-3xl mb-2 opacity-50"></i>
+                        <p>No active incidents. Infrastructure is stable.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Col: Agent Brain -->
+        <div class="bg-black rounded-xl shadow-lg border border-slate-700 p-0 flex flex-col overflow-hidden relative">
+            <div class="bg-slate-800 p-3 border-b border-slate-700 flex justify-between items-center">
+                <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-microchip text-aws"></i> Agent Reasoning Thought-Stream
+                </h2>
+                <div class="flex gap-1">
+                    <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                </div>
+            </div>
+            <div id="agentLogs" class="log-container flex-grow p-4 overflow-y-auto font-mono text-sm space-y-2 h-[500px]">
+                <div class="text-slate-500 text-xs italic">System initialized. Awaiting anomalies...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Chart.js Setup ---
+        const ctx = document.getElementById('telemetryChart').getContext('2d');
+        
+        // Initial normal baseline data (18.4)
+        let chartData = Array(15).fill(18.4).map(v => v + (Math.random() * 0.8 - 0.4)); 
+        let chartLabels = Array(15).fill('').map((_, i) => `T-${14-i}`);
+
+        const config = {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Flow Rate (L/min)',
+                    data: chartData,
+                    borderColor: '#10b981', // emerald-500
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 500 },
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 80,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    }
+                }
+            }
+        };
+        const telemetryChart = new Chart(ctx, config);
+
+        // Chart Update Helpers
+        function updateChartValue(val, isSpike = false) {
+            telemetryChart.data.datasets[0].data.shift();
+            telemetryChart.data.datasets[0].data.push(val + (Math.random() * 1.5 - 0.75));
+            
+            if(isSpike) {
+                telemetryChart.data.datasets[0].borderColor = '#ef4444'; // red
+                telemetryChart.data.datasets[0].backgroundColor = 'rgba(239, 68, 68, 0.15)';
+                document.getElementById('chartStatusBadge').className = 'text-xs px-2 py-1 bg-red-900/50 text-red-400 rounded-full border border-red-800 pulse';
+                document.getElementById('chartStatusBadge').innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> CRITICAL SURGE';
+            } else {
+                telemetryChart.data.datasets[0].borderColor = '#10b981'; // green
+                telemetryChart.data.datasets[0].backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                document.getElementById('chartStatusBadge').className = 'text-xs px-2 py-1 bg-emerald-900/50 text-emerald-400 rounded-full border border-emerald-800';
+                document.getElementById('chartStatusBadge').textContent = 'Normal Baseline';
+            }
+            telemetryChart.update();
+        }
+
+        // --- Logging Setup ---
+        const logContainer = document.getElementById('agentLogs');
+        function appendLog(text, type='info', icon='') {
+            const el = document.createElement('div');
+            el.className = 'log-entry py-1';
+            
+            let color = 'text-slate-300';
+            let prefix = '>';
+            if(type === 'warn') { color = 'text-warning'; prefix = '⚠️'; }
+            else if(type === 'error') { color = 'text-danger font-bold'; prefix = '❌'; }
+            else if(type === 'success') { color = 'text-success font-bold'; prefix = '✅'; }
+            else if(type === 'system') { color = 'text-primary'; prefix = '⚙️'; }
+            else if(type === 'tool') { color = 'text-purple-400'; prefix = '🔍'; }
+
+            if(icon) prefix = icon;
+
+            el.innerHTML = `<span class="text-slate-600 mr-2">[${new Date().toLocaleTimeString().split(' ')[0]}]</span> <span class="${color}">${prefix} ${text}</span>`;
+            logContainer.appendChild(el);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // --- Demo Sequence ---
+        async function startDemo() {
+            const btn = document.getElementById('startDemoBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Agent Active';
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            logContainer.innerHTML = ''; // clear logs
+            appendLog('Initializing Strands Autonomous Loop...', 'system');
+            
+            try {
+                // Step 1: Trigger Anomaly
+                await new Promise(r => setTimeout(r, 1000));
+                updateChartValue(64.2, true);
+                
+                appendLog('Night-flow anomaly detected at Satish Dhawan Hostel (BLDG-04)', 'warn');
+                const triggerRes = await fetch('/api/trigger-anomaly', { method: 'POST' });
+                const triggerData = await triggerRes.json();
+                let currentIncidentId = triggerData.incident.incident_id;
+                
+                document.getElementById('activeIncidents').textContent = '1';
+                document.getElementById('currentFlow').textContent = '64.2';
+                document.getElementById('currentFlow').classList.add('text-red-500');
+                
+                appendLog(`Incident Record Created: ${currentIncidentId}`, 'system');
+                
+                // Step 2: Agent Investigation
+                await new Promise(r => setTimeout(r, 2000));
+                appendLog('Initiating autonomous multi-tool context gathering...', 'info');
+                
+                const investRes = await fetch(`/api/investigate/${currentIncidentId}`, { method: 'POST' });
+                const investData = await investRes.json();
+                
+                // Animate tool calls sequentially
+                for (const log of investData.logs) {
+                    await new Promise(r => setTimeout(r, 800));
+                    appendLog(`CALL ${log.tool}()`, 'tool');
+                    appendLog(`Reasoning: ${log.reasoning}`, 'info');
+                    await new Promise(r => setTimeout(r, 600));
+                    appendLog(`Output: ${log.result.analysis}`, 'success');
+                }
+                
+                await new Promise(r => setTimeout(r, 1000));
+                appendLog(`DIAGNOSIS VERDICT: ${investData.diagnosis.verdict}`, 'error');
+                appendLog(`Confidence: ${investData.diagnosis.confidence_score * 100}% | Est. Waste: ${investData.diagnosis.estimated_daily_waste_liters} L/day`, 'warn');
+                
+                // Step 3: Dispatch Work Order
+                await new Promise(r => setTimeout(r, 2000));
+                appendLog('Drafting and dispatching work order...', 'system');
+                
+                const dispatchRes = await fetch(`/api/dispatch/${currentIncidentId}`, { method: 'POST' });
+                const dispatchData = await dispatchRes.json();
+                
+                document.getElementById('workOrdersContainer').innerHTML = `
+                    <div class="bg-slate-800 border border-slate-700 p-4 rounded-lg shadow-inner relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-warning"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-white">${dispatchData.work_order.title}</h3>
+                                <p class="text-sm text-slate-400 mt-1"><i class="fa-solid fa-user-hard-hat text-slate-500"></i> Assigned: ${dispatchData.work_order.assigned_to.name} (${dispatchData.work_order.assigned_to.role})</p>
+                            </div>
+                            <span class="bg-warning/20 text-warning px-2 py-1 rounded text-xs font-bold border border-warning/50">DISPATCHED</span>
+                        </div>
+                    </div>
+                `;
+                appendLog(`Dispatched to ${dispatchData.work_order.assigned_to.name}. SMS Notification sent.`, 'success');
+                
+                // Step 4: Bad Repair Verification (Chart stays high)
+                await new Promise(r => setTimeout(r, 4000));
+                updateChartValue(61.8, true);
+                appendLog('Technician flagged work order as COMPLETE. Initiating autonomous verification loop...', 'system');
+                
+                const verifyBadRes = await fetch(`/api/verify/${currentIncidentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ flow_rate: 61.8 }) // Bad repair
+                });
+                const verifyBadData = await verifyBadRes.json();
+                
+                document.getElementById('currentFlow').textContent = '61.8';
+                
+                await new Promise(r => setTimeout(r, 1000));
+                appendLog(`VERIFICATION FAILED: ${verifyBadData.message}`, 'error');
+                appendLog('Repair rejected! Escalating to senior supervisor...', 'warn');
+                
+                document.getElementById('workOrdersContainer').innerHTML = `
+                    <div class="bg-red-900/20 border border-red-700/50 p-4 rounded-lg shadow-inner relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-danger"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-white">${dispatchData.work_order.title}</h3>
+                                <p class="text-sm text-red-400 mt-1"><i class="fa-solid fa-triangle-exclamation"></i> FAILED VERIFICATION. ESCALATED TO SUPERVISOR.</p>
+                            </div>
+                            <span class="bg-danger/20 text-danger px-2 py-1 rounded text-xs font-bold border border-danger/50">REJECTED</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Step 5: Good Repair Verification (Chart drops)
+                await new Promise(r => setTimeout(r, 4000));
+                updateChartValue(18.2, false); // normal
+                
+                appendLog('Supervisor reports new repair completed. Re-verifying...', 'system');
+                
+                const verifyGoodRes = await fetch(`/api/verify/${currentIncidentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ flow_rate: 18.2 }) // Good repair
+                });
+                const verifyGoodData = await verifyGoodRes.json();
+                
+                document.getElementById('currentFlow').textContent = '18.2';
+                document.getElementById('currentFlow').classList.remove('text-red-500');
+                document.getElementById('currentFlow').classList.add('text-emerald-500');
+                
+                await new Promise(r => setTimeout(r, 1000));
+                appendLog(`VERIFICATION SUCCESS: ${verifyGoodData.summary}`, 'success');
+                
+                document.getElementById('workOrdersContainer').innerHTML = `
+                    <div class="bg-emerald-900/20 border border-emerald-700/50 p-4 rounded-lg shadow-inner relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-success"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-white">${dispatchData.work_order.title}</h3>
+                                <p class="text-sm text-emerald-400 mt-1"><i class="fa-solid fa-check-double"></i> Verified fixed by telemetry.</p>
+                            </div>
+                            <span class="bg-success/20 text-success px-2 py-1 rounded text-xs font-bold border border-success/50">CLOSED</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Final Impact
+                await new Promise(r => setTimeout(r, 1000));
+                appendLog(`MEASURED IMPACT: ${verifyGoodData.liters_saved_daily} L/day saved!`, 'success');
+                
+                // Animate numbers
+                let count = 0;
+                let target = verifyGoodData.liters_saved_daily;
+                let interval = setInterval(() => {
+                    count += Math.floor(target / 20);
+                    if(count >= target) { count = target; clearInterval(interval); }
+                    document.getElementById('waterSaved').textContent = count.toLocaleString();
+                }, 50);
+                
+                document.getElementById('activeIncidents').textContent = '0';
+                
+                // Continue background chart normal updates
+                setInterval(() => {
+                    if(document.getElementById('activeIncidents').textContent === '0') {
+                        updateChartValue(18.4, false);
+                    }
+                }, 2000);
+                
+            } catch (err) {
+                appendLog(`System Error: ${err.message}`, 'error');
+            }
+            
+            btn.innerHTML = '<i class="fa-solid fa-flag-checkered"></i> Demo Complete';
+            btn.classList.replace('bg-primary', 'bg-success');
+        }
+    </script>
+</body>
+</html>

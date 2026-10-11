@@ -1,0 +1,1595 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PipeSense & DrainPilot Operational Resilience API",
+    "version": "2.0.0",
+    "description": "### Integrated Water & Grid Resilience Platform (Campus Infrastructure)\nAutonomous closed-loop operational agents for campus infrastructure monitoring, anomaly detection, autonomous context investigation, crew dispatch, and physical sensor verification.\n\n- **PipeSense Engine**: Monitors indoor/potable water distribution networks, detects night-flow leaks, investigates contextual causes (weather, occupancy, baseline, maintenance), and performs post-repair physical telemetry verification.\n- **DrainPilot Engine**: Monitors campus stormwater and drainage chambers, identifies silt blockages, rapid rise, and pump station faults, ensuring full flood resilience and verified civil maintenance closure.\n\n*Target Backend Server runs on Port 5001.*\n"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5001",
+      "description": "Local PipeSense & DrainPilot API Backend (Port 5001)"
+    },
+    {
+      "url": "http://127.0.0.1:5001",
+      "description": "Local Loopback IP (Port 5001)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "PipeSense - Anomaly & Incidents",
+      "description": "Potable water telemetry ingestion, leak detection, autonomous agent investigation, and crew dispatch."
+    },
+    {
+      "name": "PipeSense - Metrics & Impact",
+      "description": "Operational summaries, water loss reduction calculations, and sustainability impact metrics."
+    },
+    {
+      "name": "DrainPilot - Detection & Incidents",
+      "description": "Stormwater chamber telemetry, overflow risk alerts, and autonomous drainage investigation."
+    },
+    {
+      "name": "DrainPilot - Work Orders & Dispatch",
+      "description": "Drainage maintenance work orders, technician completion claims, and post-repair physical verification."
+    },
+    {
+      "name": "DrainPilot - Summary",
+      "description": "Drainage network operational metrics and pump station health status."
+    },
+    {
+      "name": "Work Orders & Closed-Loop Verification",
+      "description": "Cross-system work order tracking and closed-loop verification endpoints."
+    },
+    {
+      "name": "Events & Audit Trail",
+      "description": "Immutable event streaming and audit trail per incident."
+    },
+    {
+      "name": "Simulation & Demo",
+      "description": "One-click interactive walkthrough and demo state reset endpoints."
+    }
+  ],
+  "paths": {
+    "/pipesense/detect": {
+      "post": {
+        "tags": [
+          "PipeSense - Anomaly & Incidents"
+        ],
+        "summary": "Detect Pipe Anomaly / Water Leak Surge",
+        "description": "Evaluates current water flow against baseline flow. Flags an incident if the ratio exceeds 1.35x.",
+        "operationId": "detectPipeAnomaly",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PipeSenseDetectRequest"
+              },
+              "example": {
+                "zone": "BLDG-04",
+                "current_flow": 64.2,
+                "baseline_flow": 18.4
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Detection evaluation result. Returns created Incident object if anomalous, or nominal status message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": {
+                    "$ref": "#/components/schemas/NominalFlowResponse"
+                  }
+                },
+                "examples": {
+                  "anomaly": {
+                    "summary": "Anomaly Detected (Leak Surge)",
+                    "value": {
+                      "incident_id": "INC-1728500000",
+                      "zone": "BLDG-04",
+                      "baseline_flow_lpm": 18.4,
+                      "current_flow_lpm": 64.2,
+                      "system": "PIPE",
+                      "state": "ANOMALY",
+                      "severity": "UNKNOWN",
+                      "priority": "UNASSIGNED",
+                      "confidence": 0.0,
+                      "description": "Abnormal flow detected: 64.2 L/min (3.49x baseline)",
+                      "diagnosis": "",
+                      "detected_at": "2026-10-09T02:45:00",
+                      "created_at": "2026-10-09T02:45:00",
+                      "updated_at": "2026-10-09T02:45:00",
+                      "metadata": {}
+                    }
+                  },
+                  "nominal": {
+                    "summary": "Nominal Flow",
+                    "value": {
+                      "message": "Nominal flow"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pipesense/incidents": {
+      "get": {
+        "tags": [
+          "PipeSense - Anomaly & Incidents"
+        ],
+        "summary": "List All Incidents",
+        "description": "Returns all recorded incidents across the system.",
+        "operationId": "listPipeIncidents",
+        "responses": {
+          "200": {
+            "description": "A list of incidents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Incident"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pipesense/incidents/{incident_id}": {
+      "get": {
+        "tags": [
+          "PipeSense - Anomaly & Incidents"
+        ],
+        "summary": "Get Incident Details",
+        "description": "Retrieves a specific incident by its unique ID.",
+        "operationId": "getPipeIncident",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique incident identifier (e.g. INC-1728500000)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Incident details found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incident not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pipesense/incidents/{incident_id}/investigate": {
+      "post": {
+        "tags": [
+          "PipeSense - Anomaly & Incidents"
+        ],
+        "summary": "Trigger Autonomous Agent Investigation",
+        "description": "Runs the multi-tool contextual investigation agent:\n1. `check_weather`: Rules out irrigation and rainfall anomalies.\n2. `check_peer_baselines`: Compares adjacent zone baselines to rule out pressure spikes.\n3. `check_maintenance_history`: Inspects historical work orders for fissures/cracks.\n4. `check_occupancy`: Confirms standard rest hours vs. lab activities.\nTransitions state to `LEAK_CONFIRMED` and calculates pre-repair estimated daily water loss.\n",
+        "operationId": "investigatePipeIncident",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique incident identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Investigation completed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid state transition.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pipesense/incidents/{incident_id}/dispatch": {
+      "post": {
+        "tags": [
+          "PipeSense - Anomaly & Incidents"
+        ],
+        "summary": "Dispatch Maintenance Work Order",
+        "description": "Autonomously drafts a P1 maintenance work order assigned to the on-call Senior Plumber and transitions the incident to `WORK_ORDER_ISSUED`.",
+        "operationId": "dispatchPipeWorkOrder",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique incident identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Work order created and dispatched.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrder"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid state transition (incident must be in LEAK_CONFIRMED state).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pipesense/summary": {
+      "get": {
+        "tags": [
+          "PipeSense - Metrics & Impact"
+        ],
+        "summary": "Get PipeSense Operational Summary",
+        "description": "Provides high-level operational counts, active incidents, and estimated/avoided water loss volume.",
+        "operationId": "getPipeSummary",
+        "responses": {
+          "200": {
+            "description": "Summary metrics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipeSenseSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pipesense/impact": {
+      "get": {
+        "tags": [
+          "PipeSense - Metrics & Impact"
+        ],
+        "summary": "Get Verified Water Savings Impact",
+        "description": "Returns physical sustainability impact metrics (daily water loss avoided, post-repair reduction) for verified incidents in BLDG-04.",
+        "operationId": "getPipeImpact",
+        "responses": {
+          "200": {
+            "description": "Verified water conservation metrics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PipeSenseImpact"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/work-orders": {
+      "get": {
+        "tags": [
+          "Work Orders & Closed-Loop Verification"
+        ],
+        "summary": "List All Work Orders",
+        "description": "Retrieves all active and closed work orders across the system.",
+        "operationId": "listWorkOrders",
+        "responses": {
+          "200": {
+            "description": "List of work orders.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkOrder"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/work-orders/{work_order_id}/complete": {
+      "post": {
+        "tags": [
+          "Work Orders & Closed-Loop Verification"
+        ],
+        "summary": "Claim Work Order Completion",
+        "description": "Technician marks repair complete. Crucially, the system does **not** close the ticket.\nInstead, it moves the incident to `VERIFYING` state and initiates post-repair telemetry evaluation.\n",
+        "operationId": "completeWorkOrder",
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique work order identifier (e.g. WO-A1B2C3)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Completion recorded; verification cycle initiated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid state transition.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/work-orders/{work_order_id}/verify": {
+      "post": {
+        "tags": [
+          "Work Orders & Closed-Loop Verification"
+        ],
+        "summary": "Verify Physical Telemetry Post-Repair",
+        "description": "Ingests post-repair telemetry flow rate:\n- If flow <= baseline * 1.35: Verifies fix, calculates avoided daily loss, transitions to `RESOLVED` and then `CLOSED`.\n- If flow > baseline * 1.35: Rejects false claim, transitions incident to `ESCALATED`, reassigns ticket to Senior Supervisor.\n",
+        "operationId": "verifyWorkOrder",
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique work order identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PipeSenseVerifyRequest"
+              },
+              "example": {
+                "telemetry": 18.2
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification evaluated. Returns updated incident state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incident not in VERIFYING state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/work-orders/{work_order_id}/repair": {
+      "post": {
+        "tags": [
+          "Work Orders & Closed-Loop Verification"
+        ],
+        "summary": "Initiate Second Repair Attempt",
+        "description": "Transitions an escalated work order back to `REPAIRING` state with `IN_PROGRESS` status for secondary crew intervention.",
+        "operationId": "startSecondRepair",
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique work order identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Second repair cycle started.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incident must be ESCALATED to start second repair.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{incident_id}": {
+      "get": {
+        "tags": [
+          "Events & Audit Trail"
+        ],
+        "summary": "Get Incident Event Timeline",
+        "description": "Retrieves the chronological event stream and tool invocations associated with an incident.",
+        "operationId": "getIncidentEvents",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "description": "Incident identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of timeline events.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/detect": {
+      "post": {
+        "tags": [
+          "DrainPilot - Detection & Incidents"
+        ],
+        "summary": "Ingest Drainage Telemetry & Detect Anomaly",
+        "description": "Evaluates stormwater/drainage chamber parameters against deterministic multi-threshold rules:\n- Fill ratio (warning >= 65%, critical >= 85%)\n- Rapid water-level rise (rate of rise >= 15 cm/hr)\n- Freeboard overflow margin (headroom <= 15 cm)\n- Pump status anomaly (TRIPPED, FAULT, FAILED)\n",
+        "operationId": "detectDrainAnomaly",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrainTelemetryDetectRequest"
+              },
+              "example": {
+                "zone": "DRAIN-NORTH-01",
+                "chamber_depth_cm": 100.0,
+                "water_level_cm": 88.0,
+                "baseline_water_level_cm": 20.0,
+                "rate_of_rise_cm_per_hr": 16.5,
+                "pump_status": "OFF"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Anomaly or overflow risk detected. Created incident returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Telemetry within safe nominal limits. No incident created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrainNominalResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed or missing JSON body.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/incidents": {
+      "get": {
+        "tags": [
+          "DrainPilot - Detection & Incidents"
+        ],
+        "summary": "List DrainPilot Incidents",
+        "description": "Returns strictly incidents originating from the DrainPilot system (`system == 'DRAIN'`), enforcing system isolation.",
+        "operationId": "listDrainIncidents",
+        "responses": {
+          "200": {
+            "description": "List of DrainPilot incidents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Incident"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/incidents/{incident_id}": {
+      "get": {
+        "tags": [
+          "DrainPilot - Detection & Incidents"
+        ],
+        "summary": "Get Single DrainPilot Incident",
+        "description": "Retrieves a drainage incident. Returns 404 if the incident does not exist or belongs to another system.",
+        "operationId": "getDrainIncident",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique incident identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drainage incident found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incident not found or not a drainage incident.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/incidents/{incident_id}/investigate": {
+      "post": {
+        "tags": [
+          "DrainPilot - Detection & Incidents"
+        ],
+        "summary": "Autonomous Drainage Agent Investigation",
+        "description": "Executes autonomous multi-tool investigation combining CCTV silt detection, upstream flow meters, weather rainfall radar, and pump telemetry.",
+        "operationId": "investigateDrainIncident",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "description": "Incident identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Investigation completed and diagnosis recorded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wrong system (not DRAIN).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incident not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Invalid state transition (incident must be in ANOMALY state).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/incidents/{incident_id}/dispatch": {
+      "post": {
+        "tags": [
+          "DrainPilot - Work Orders & Dispatch"
+        ],
+        "summary": "Dispatch Drainage Maintenance Crew",
+        "description": "Dispatches a P1/P2 work order assigned to Drainage & Civils specialists and updates incident state to `WORK_ORDER_ISSUED`.",
+        "operationId": "dispatchDrainWorkOrder",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "description": "Incident identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Maintenance work order dispatched.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrder"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wrong system.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incident not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Invalid state transition.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/work-orders": {
+      "get": {
+        "tags": [
+          "DrainPilot - Work Orders & Dispatch"
+        ],
+        "summary": "List DrainPilot Work Orders",
+        "description": "Lists only work orders associated with DrainPilot drainage incidents.",
+        "operationId": "listDrainWorkOrders",
+        "responses": {
+          "200": {
+            "description": "List of DrainPilot work orders.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkOrder"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/work-orders/{work_order_id}": {
+      "get": {
+        "tags": [
+          "DrainPilot - Work Orders & Dispatch"
+        ],
+        "summary": "Get Single DrainPilot Work Order",
+        "description": "Retrieves a single drainage work order by ID with strict system isolation.",
+        "operationId": "getDrainWorkOrder",
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique work order identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Drain work order found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrder"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Work order not found or belongs to another system.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/work-orders/{work_order_id}/complete": {
+      "post": {
+        "tags": [
+          "DrainPilot - Work Orders & Dispatch"
+        ],
+        "summary": "Record Drainage Maintenance Completion Claim",
+        "description": "Records technician maintenance completion claim (desilting/clearing complete) and transitions incident to `VERIFYING` state. Does not close the ticket without physical telemetry verification.",
+        "operationId": "completeDrainWorkOrder",
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "description": "Work order identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Completion recorded; ready for physical verification.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wrong system.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Work order or incident not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Invalid state transition (incident must be in WORK_ORDER_ISSUED or REPAIRING).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/work-orders/{work_order_id}/verify": {
+      "post": {
+        "tags": [
+          "DrainPilot - Work Orders & Dispatch"
+        ],
+        "summary": "Verify Post-Maintenance Drainage Telemetry",
+        "description": "Submits physical post-maintenance telemetry to verify chamber capacity restoration against strict thresholds:\n- Fill ratio <= 0.45 (safe fill ratio)\n- Freeboard >= 30 cm\n- Rate of rise <= 5.0 cm/hr\n- Pump status is not faulted\nIf passed, closes incident. If failed, transitions incident to `ESCALATED` and reassigns to Senior Civil Supervisor.\n",
+        "operationId": "verifyDrainWorkOrder",
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "description": "Work order identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrainVerifyRequest"
+              },
+              "example": {
+                "water_level_cm": 25.0,
+                "chamber_depth_cm": 100.0,
+                "rate_of_rise_cm_per_hr": 2.0,
+                "pump_status": "OFF"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Telemetry verification completed. Returns updated incident state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed telemetry or wrong system.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Work order not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Invalid state transition (incident must be in VERIFYING state).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/work-orders/{work_order_id}/repair": {
+      "post": {
+        "tags": [
+          "DrainPilot - Work Orders & Dispatch"
+        ],
+        "summary": "Initiate Second Drainage Maintenance Attempt",
+        "description": "Initiates second repair attempt for an escalated drainage work order, moving the incident back into `REPAIRING` state.",
+        "operationId": "repairDrainWorkOrder",
+        "parameters": [
+          {
+            "name": "work_order_id",
+            "in": "path",
+            "required": true,
+            "description": "Work order identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Second repair started.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Incident"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wrong system.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Work order not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Invalid state transition (incident must be in ESCALATED state).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drainpilot/summary": {
+      "get": {
+        "tags": [
+          "DrainPilot - Summary"
+        ],
+        "summary": "Get DrainPilot Operational Summary",
+        "description": "Queries operational metrics specific to drainage chambers, overflow risks, and pump statuses.",
+        "operationId": "getDrainSummary",
+        "responses": {
+          "200": {
+            "description": "Drainage operational summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrainPilotSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/pipesense/reset": {
+      "post": {
+        "tags": [
+          "Simulation & Demo"
+        ],
+        "summary": "Reset Demo State",
+        "description": "Resets all in-memory incidents, events, and work orders to a clean baseline state.",
+        "operationId": "resetDemo",
+        "responses": {
+          "200": {
+            "description": "Demo state successfully reset.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Demo reset complete."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/pipesense/run": {
+      "post": {
+        "tags": [
+          "Simulation & Demo"
+        ],
+        "summary": "Run Full PipeSense Closed-Loop Demo",
+        "description": "Executes the complete end-to-end resilience loop (Anomaly -> Investigation -> Dispatch -> Claim Completion -> Failed Verification & Escalation -> Second Repair -> Passed Verification & Impact Measurement).",
+        "operationId": "runDemo",
+        "responses": {
+          "200": {
+            "description": "Complete demo execution result including final resolved incident and event timeline.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "incident": {
+                      "$ref": "#/components/schemas/Incident"
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Event"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Incident": {
+        "type": "object",
+        "properties": {
+          "incident_id": {
+            "type": "string",
+            "example": "INC-1728500000"
+          },
+          "zone": {
+            "type": "string",
+            "example": "BLDG-04"
+          },
+          "baseline_flow_lpm": {
+            "type": "number",
+            "format": "float",
+            "example": 18.4
+          },
+          "current_flow_lpm": {
+            "type": "number",
+            "format": "float",
+            "example": 64.2
+          },
+          "system": {
+            "type": "string",
+            "enum": [
+              "PIPE",
+              "DRAIN"
+            ],
+            "example": "PIPE"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "NOMINAL",
+              "ANOMALY",
+              "INVESTIGATING",
+              "LEAK_CONFIRMED",
+              "LEAK_SUSPECTED",
+              "LEGITIMATE_USAGE",
+              "WORK_ORDER_ISSUED",
+              "VERIFYING",
+              "FAILED_VERIFICATION",
+              "ESCALATED",
+              "REPAIRING",
+              "RESOLVED",
+              "CLOSED"
+            ],
+            "example": "LEAK_CONFIRMED"
+          },
+          "severity": {
+            "type": "string",
+            "example": "CRITICAL"
+          },
+          "priority": {
+            "type": "string",
+            "example": "P1"
+          },
+          "confidence": {
+            "type": "number",
+            "format": "float",
+            "example": 0.98
+          },
+          "description": {
+            "type": "string",
+            "example": "Abnormal flow detected: 64.2 L/min (3.49x baseline)"
+          },
+          "diagnosis": {
+            "type": "string",
+            "example": "LEAK_CONFIRMED"
+          },
+          "detected_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-09T02:45:00"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-09T02:45:00"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-09T02:45:30"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "example": {
+              "estimated_daily_loss_liters": 65952.0,
+              "agent_evidence": {
+                "weather": "Clear / No Rain",
+                "neighboring_baselines": "1.0x (Normal)",
+                "structural_vulnerability": "Basement Secondary Riser fissure recorded"
+              }
+            }
+          }
+        }
+      },
+      "WorkOrder": {
+        "type": "object",
+        "properties": {
+          "work_order_id": {
+            "type": "string",
+            "example": "WO-7A8B9C"
+          },
+          "incident_id": {
+            "type": "string",
+            "example": "INC-1728500000"
+          },
+          "priority": {
+            "type": "string",
+            "example": "P1"
+          },
+          "assigned_role": {
+            "type": "string",
+            "example": "Senior Plumber"
+          },
+          "assigned_person": {
+            "type": "string",
+            "example": "On-call Senior Plumber"
+          },
+          "zone": {
+            "type": "string",
+            "example": "BLDG-04"
+          },
+          "description": {
+            "type": "string",
+            "example": "Basement Secondary Riser"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "ASSIGNED",
+              "COMPLETION_CLAIMED",
+              "VERIFIED",
+              "FAILED_VERIFICATION",
+              "ESCALATED",
+              "IN_PROGRESS",
+              "CLOSED"
+            ],
+            "example": "ASSIGNED"
+          },
+          "verification_status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PASSED",
+              "FAILED"
+            ],
+            "example": "PENDING"
+          },
+          "completion_claimed_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "event_type": {
+            "type": "string",
+            "example": "ANOMALY_DETECTED"
+          },
+          "incident_id": {
+            "type": "string",
+            "nullable": true,
+            "example": "INC-1728500000"
+          },
+          "work_order_id": {
+            "type": "string",
+            "nullable": true,
+            "example": "WO-7A8B9C"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "PipeSenseDetectRequest": {
+        "type": "object",
+        "required": [
+          "zone",
+          "current_flow",
+          "baseline_flow"
+        ],
+        "properties": {
+          "zone": {
+            "type": "string",
+            "description": "Campus building or pipe zone code",
+            "example": "BLDG-04"
+          },
+          "current_flow": {
+            "type": "number",
+            "format": "float",
+            "description": "Measured flow in Liters per minute",
+            "example": 64.2
+          },
+          "baseline_flow": {
+            "type": "number",
+            "format": "float",
+            "description": "Expected baseline flow in Liters per minute",
+            "example": 18.4
+          }
+        }
+      },
+      "PipeSenseVerifyRequest": {
+        "type": "object",
+        "required": [
+          "telemetry"
+        ],
+        "properties": {
+          "telemetry": {
+            "type": "number",
+            "format": "float",
+            "description": "Post-repair measured flow rate in L/min",
+            "example": 18.2
+          }
+        }
+      },
+      "DrainTelemetryDetectRequest": {
+        "type": "object",
+        "required": [
+          "zone",
+          "chamber_depth_cm",
+          "water_level_cm"
+        ],
+        "properties": {
+          "zone": {
+            "type": "string",
+            "description": "Stormwater chamber or drainage zone ID",
+            "example": "DRAIN-NORTH-01"
+          },
+          "chamber_depth_cm": {
+            "type": "number",
+            "format": "float",
+            "description": "Total chamber depth in cm",
+            "example": 100.0
+          },
+          "water_level_cm": {
+            "type": "number",
+            "format": "float",
+            "description": "Measured water level in cm",
+            "example": 88.0
+          },
+          "baseline_water_level_cm": {
+            "type": "number",
+            "format": "float",
+            "description": "Standard dry baseline water level in cm",
+            "example": 20.0
+          },
+          "rate_of_rise_cm_per_hr": {
+            "type": "number",
+            "format": "float",
+            "description": "Water level rate of rise in cm per hour",
+            "example": 16.5
+          },
+          "pump_status": {
+            "type": "string",
+            "description": "Current submersible pump operational status",
+            "enum": [
+              "OFF",
+              "ON",
+              "TRIPPED",
+              "ALERT_OVERHEAT",
+              "FAILED",
+              "FAULT"
+            ],
+            "example": "OFF"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Telemetry timestamp",
+            "example": "2026-10-09T02:45:00"
+          }
+        }
+      },
+      "DrainVerifyRequest": {
+        "type": "object",
+        "required": [
+          "water_level_cm"
+        ],
+        "properties": {
+          "water_level_cm": {
+            "type": "number",
+            "format": "float",
+            "description": "Post-maintenance chamber water level in cm",
+            "example": 25.0
+          },
+          "chamber_depth_cm": {
+            "type": "number",
+            "format": "float",
+            "description": "Chamber depth in cm",
+            "example": 100.0
+          },
+          "rate_of_rise_cm_per_hr": {
+            "type": "number",
+            "format": "float",
+            "description": "Post-maintenance rate of rise in cm/hr",
+            "example": 2.0
+          },
+          "pump_status": {
+            "type": "string",
+            "description": "Pump status",
+            "example": "OFF"
+          }
+        }
+      },
+      "NominalFlowResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Nominal flow"
+          }
+        }
+      },
+      "DrainNominalResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "NOMINAL"
+          },
+          "message": {
+            "type": "string",
+            "example": "Drainage telemetry within safe operating parameters. No anomaly detected."
+          },
+          "is_simulated": {
+            "type": "boolean",
+            "example": true
+          },
+          "data_origin": {
+            "type": "string",
+            "example": "SIMULATED_BENCHMARK_TELEMETRY"
+          }
+        }
+      },
+      "PipeSenseSummary": {
+        "type": "object",
+        "properties": {
+          "total_zones": {
+            "type": "integer",
+            "example": 14
+          },
+          "active_incidents": {
+            "type": "integer",
+            "example": 1
+          },
+          "critical_incidents": {
+            "type": "integer",
+            "example": 1
+          },
+          "resolved_today": {
+            "type": "integer",
+            "example": 0
+          },
+          "estimated_daily_loss_liters": {
+            "type": "number",
+            "format": "float",
+            "example": 65952.0
+          },
+          "verified_daily_loss_avoided_liters": {
+            "type": "number",
+            "format": "float",
+            "example": 0.0
+          }
+        }
+      },
+      "PipeSenseImpact": {
+        "type": "object",
+        "properties": {
+          "estimated_daily_loss_liters": {
+            "type": "number",
+            "example": 65952.0
+          },
+          "verified_daily_loss_avoided_liters": {
+            "type": "number",
+            "example": 66240.0
+          },
+          "baseline_flow_lpm": {
+            "type": "number",
+            "example": 18.4
+          },
+          "peak_abnormal_flow_lpm": {
+            "type": "number",
+            "example": 64.2
+          },
+          "verified_post_repair_flow_lpm": {
+            "type": "number",
+            "example": 18.2
+          },
+          "water_loss_reduction_lpm": {
+            "type": "number",
+            "example": 46.0
+          }
+        }
+      },
+      "DrainPilotSummary": {
+        "type": "object",
+        "properties": {
+          "total_chambers_monitored": {
+            "type": "integer",
+            "example": 12
+          },
+          "active_drainage_incidents": {
+            "type": "integer",
+            "example": 1
+          },
+          "critical_overflow_risks": {
+            "type": "integer",
+            "example": 1
+          },
+          "resolved_drainage_incidents": {
+            "type": "integer",
+            "example": 0
+          },
+          "open_drainage_work_orders": {
+            "type": "integer",
+            "example": 1
+          },
+          "pump_stations_tripped": {
+            "type": "integer",
+            "example": 0
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Incident not found"
+          },
+          "is_simulated": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      }
+    }
+  }
+}

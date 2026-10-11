@@ -1,0 +1,2537 @@
+{
+  "incidents": {
+    "INC-D25CFB": {
+      "incident_id": "INC-D25CFB",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "VERIFICATION_FAILED_ESCALATED",
+      "created_at": "2026-10-08T12:40:49.658336",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-08T12:40:50.689165",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-08T12:40:50.692568",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_current_night_lpm": 64.2,
+            "target_baseline_night_lpm": 18.4,
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "name": "Admin Block",
+                "baseline_night_lpm": 12.0,
+                "current_night_lpm": 11.8,
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "name": "Compute Hub",
+                "baseline_night_lpm": 8.5,
+                "current_night_lpm": 8.9,
+                "ratio": 1.04,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "name": "Engineering Block",
+                "baseline_night_lpm": 14.2,
+                "current_night_lpm": 13.9,
+                "ratio": 0.97,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "name": "Dining & Amenities",
+                "baseline_night_lpm": 22.0,
+                "current_night_lpm": 23.1,
+                "ratio": 1.05,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All 4 peer buildings show normal night flow ratios (0.97x - 1.05x). Only BLDG-04 shows a 3.49x surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-08T12:40:50.693116",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-08T12:40:50.693647",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "01:00 - 05:00 IST",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "expected_normal_night_lpm": "15 - 22 L/min",
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-C53150",
+      "outcome": null,
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-E6631C": {
+      "incident_id": "INC-E6631C",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-08T12:41:25.595392",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-08T12:41:26.597780",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-08T12:41:26.598910",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_current_night_lpm": 64.2,
+            "target_baseline_night_lpm": 18.4,
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "name": "Admin Block",
+                "baseline_night_lpm": 12.0,
+                "current_night_lpm": 11.8,
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "name": "Compute Hub",
+                "baseline_night_lpm": 8.5,
+                "current_night_lpm": 8.9,
+                "ratio": 1.04,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "name": "Engineering Block",
+                "baseline_night_lpm": 14.2,
+                "current_night_lpm": 13.9,
+                "ratio": 0.97,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "name": "Dining & Amenities",
+                "baseline_night_lpm": 22.0,
+                "current_night_lpm": 23.1,
+                "ratio": 1.05,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All 4 peer buildings show normal night flow ratios (0.97x - 1.05x). Only BLDG-04 shows a 3.49x surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-08T12:41:26.599939",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-08T12:41:26.600772",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "01:00 - 05:00 IST",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "expected_normal_night_lpm": "15 - 22 L/min",
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-F86C94",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-08T12:41:31.609187",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-77E92D": {
+      "incident_id": "INC-77E92D",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-08T14:07:15.029510",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-08T14:07:22.670446",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-08T14:07:22.673969",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_current_night_lpm": 64.2,
+            "target_baseline_night_lpm": 18.4,
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "name": "Admin Block",
+                "baseline_night_lpm": 12.0,
+                "current_night_lpm": 11.8,
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "name": "Compute Hub",
+                "baseline_night_lpm": 8.5,
+                "current_night_lpm": 8.9,
+                "ratio": 1.04,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "name": "Engineering Block",
+                "baseline_night_lpm": 14.2,
+                "current_night_lpm": 13.9,
+                "ratio": 0.97,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "name": "Dining & Amenities",
+                "baseline_night_lpm": 22.0,
+                "current_night_lpm": 23.1,
+                "ratio": 1.05,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All 4 peer buildings show normal night flow ratios (0.97x - 1.05x). Only BLDG-04 shows a 3.49x surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-08T14:07:22.677714",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-08T14:07:22.681980",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "01:00 - 05:00 IST",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "expected_normal_night_lpm": "15 - 22 L/min",
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-0FCED9",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-08T14:07:27.713005",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-35457B": {
+      "incident_id": "INC-35457B",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-08T14:11:55.378581",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-08T14:11:59.451643",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-08T14:11:59.459280",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_current_night_lpm": 64.2,
+            "target_baseline_night_lpm": 18.4,
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "name": "Admin Block",
+                "baseline_night_lpm": 12.0,
+                "current_night_lpm": 11.8,
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "name": "Compute Hub",
+                "baseline_night_lpm": 8.5,
+                "current_night_lpm": 8.9,
+                "ratio": 1.04,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "name": "Engineering Block",
+                "baseline_night_lpm": 14.2,
+                "current_night_lpm": 13.9,
+                "ratio": 0.97,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "name": "Dining & Amenities",
+                "baseline_night_lpm": 22.0,
+                "current_night_lpm": 23.1,
+                "ratio": 1.05,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All 4 peer buildings show normal night flow ratios (0.97x - 1.05x). Only BLDG-04 shows a 3.49x surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-08T14:11:59.469526",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-08T14:11:59.477994",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "01:00 - 05:00 IST",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "expected_normal_night_lpm": "15 - 22 L/min",
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-A5A415",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-08T14:12:08.581005",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      },
+      "diagnosis": {
+        "incident_id": "INC-35457B",
+        "anomaly_summary": "Night flow is 64.2 L/min (baseline: 18.4 L/min, 3.5x normal).",
+        "evidence_synthesis": [
+          "1. Weather: Zero precipitation and irrigation valves are inactive (rules out environmental false positive).",
+          "2. Peer Baselines: 4 neighboring blocks operate at 0.98x - 1.05x normal (rules out municipal pressure spikes).",
+          "3. Asset History: Known micro-fissure at Basement Secondary Riser Line B recorded on Sept 2.",
+          "4. Occupancy: Zero night lab events registered; standard resting hours (rules out human usage)."
+        ],
+        "confidence_score": 0.98,
+        "verdict": "CONFIRMED_MAJOR_LEAK",
+        "probable_location": "Basement Secondary Riser / Sump Feed Valve Line B",
+        "recommended_priority": "P1_URGENT",
+        "estimated_water_loss_rate_lpm": 45.8,
+        "estimated_daily_waste_liters": 65952
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-E04A98": {
+      "incident_id": "INC-E04A98",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "DISPATCHED",
+      "created_at": "2026-10-08T14:32:05.164103",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-08T14:32:07.255209",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-08T14:32:07.287758",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_current_night_lpm": 64.2,
+            "target_baseline_night_lpm": 18.4,
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "name": "Admin Block",
+                "baseline_night_lpm": 12.0,
+                "current_night_lpm": 11.8,
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "name": "Compute Hub",
+                "baseline_night_lpm": 8.5,
+                "current_night_lpm": 8.9,
+                "ratio": 1.04,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "name": "Engineering Block",
+                "baseline_night_lpm": 14.2,
+                "current_night_lpm": 13.9,
+                "ratio": 0.97,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "name": "Dining & Amenities",
+                "baseline_night_lpm": 22.0,
+                "current_night_lpm": 23.1,
+                "ratio": 1.05,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All 4 peer buildings show normal night flow ratios (0.97x - 1.05x). Only BLDG-04 shows a 3.49x surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-08T14:32:07.329833",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-08T14:32:07.347753",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "01:00 - 05:00 IST",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "expected_normal_night_lpm": "15 - 22 L/min",
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-0AAFBA",
+      "outcome": null,
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      },
+      "diagnosis": {
+        "incident_id": "INC-E04A98",
+        "anomaly_summary": "Night flow is 64.2 L/min (baseline: 18.4 L/min, 3.5x normal).",
+        "evidence_synthesis": [
+          "1. Weather: Zero precipitation and irrigation valves are inactive (rules out environmental false positive).",
+          "2. Peer Baselines: 4 neighboring blocks operate at 0.98x - 1.05x normal (rules out municipal pressure spikes).",
+          "3. Asset History: Known micro-fissure at Basement Secondary Riser Line B recorded on Sept 2.",
+          "4. Occupancy: Zero night lab events registered; standard resting hours (rules out human usage)."
+        ],
+        "confidence_score": 0.98,
+        "verdict": "CONFIRMED_MAJOR_LEAK",
+        "probable_location": "Basement Secondary Riser / Sump Feed Valve Line B",
+        "recommended_priority": "P1_URGENT",
+        "estimated_water_loss_rate_lpm": 45.8,
+        "estimated_daily_waste_liters": 65952
+      }
+    },
+    "INC-143A9E": {
+      "incident_id": "INC-143A9E",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-11T11:27:57.526357",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T11:27:58.531703",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T11:27:58.535722",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 0.99,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 1.03,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 1.04,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 0.95,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T11:27:58.538795",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T11:27:58.544478",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "verdict": "ACTIVE_HOURS",
+            "analysis": "Building is in active daytime usage (Hour: 11). High flow is expected."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-8D22AF",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-11T11:28:03.710805",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-08AF71": {
+      "incident_id": "INC-08AF71",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-11T11:36:44.860085",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T11:36:45.865631",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T11:36:45.873202",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 1.02,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 0.96,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 0.95,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 1.03,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T11:36:45.881724",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T11:36:45.888723",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "verdict": "ACTIVE_HOURS",
+            "analysis": "Building is in active daytime usage (Hour: 11). High flow is expected."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-337D65",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-11T11:36:50.921140",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-785246": {
+      "incident_id": "INC-785246",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-11T11:49:51.660494",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T11:49:52.673117",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T11:49:52.683664",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 1.02,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 0.96,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 1.04,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 0.97,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T11:49:52.692403",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T11:49:52.698432",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "verdict": "ACTIVE_HOURS",
+            "analysis": "Building is in active daytime usage (Hour: 11). High flow is expected."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-45C663",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-11T11:49:57.736656",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-2A66CB": {
+      "incident_id": "INC-2A66CB",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-11T12:02:35.048791",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T12:02:36.056741",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T12:02:36.063323",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 1.01,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 1.02,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 1.03,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 0.96,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T12:02:36.071839",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T12:02:36.077845",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "verdict": "ACTIVE_HOURS",
+            "analysis": "Building is in active daytime usage (Hour: 12). High flow is expected."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-87A65D",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-11T12:02:41.110726",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-CDBB72": {
+      "incident_id": "INC-CDBB72",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "INVESTIGATING",
+      "created_at": "2026-10-11T12:34:41.186393",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T12:34:41.191905",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T12:34:41.195913",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 0.97,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 0.96,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 0.99,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 1.01,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T12:34:41.198912",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T12:34:41.203435",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "verdict": "ACTIVE_HOURS",
+            "analysis": "Building is in active daytime usage (Hour: 12). High flow is expected."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": null,
+      "outcome": null,
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      }
+    },
+    "INC-BB2DD4": {
+      "incident_id": "INC-BB2DD4",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "INVESTIGATING",
+      "created_at": "2026-10-11T12:36:14.224651",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T12:36:14.228648",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 5.0,
+            "temperature_celsius": 22.0,
+            "irrigation_active": true,
+            "verdict": "ENVIRONMENTAL_TRIGGER",
+            "analysis": "Rainfall detected: False. Irrigation active: True. Flow surge is likely environmental."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T12:36:14.235180",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 1.03,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 0.97,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 1.01,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 1.04,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T12:36:14.239180",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T12:36:14.242695",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "Night/Sleep Window (02:45 IST)",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": null,
+      "outcome": null,
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      }
+    },
+    "INC-D3A4AF": {
+      "incident_id": "INC-D3A4AF",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "INVESTIGATING",
+      "created_at": "2026-10-11T12:36:40.691519",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T12:36:40.695576",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T12:36:40.699089",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 0.96,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 1.01,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 0.99,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 1.0,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T12:36:40.705207",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T12:36:40.713783",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "Night/Sleep Window (02:45 IST)",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": null,
+      "outcome": null,
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      }
+    },
+    "INC-DB3A02": {
+      "incident_id": "INC-DB3A02",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-11T12:37:12.408572",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T12:37:12.415089",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T12:37:12.419089",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 0.97,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 0.95,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 0.98,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T12:37:12.424620",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T12:37:12.428616",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "Night/Sleep Window (02:45 IST)",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-E7EB94",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-11T12:37:12.447685",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-3D7D57": {
+      "incident_id": "INC-3D7D57",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-11T12:47:45.707320",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T12:47:45.715837",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T12:47:45.720839",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 1.0,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 1.02,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 0.99,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T12:47:45.730874",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T12:47:45.739888",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "Night/Sleep Window (02:45 IST)",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-F34F7A",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-11T12:47:45.764470",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-871770": {
+      "incident_id": "INC-871770",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-11T13:04:04.781890",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T13:04:04.796580",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T13:04:04.811604",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 1.0,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 1.02,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 0.99,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T13:04:04.823075",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T13:04:04.835645",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "Night/Sleep Window (02:45 IST)",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-89F566",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-11T13:04:04.867266",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-DF630A": {
+      "incident_id": "INC-DF630A",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-11T13:42:50.138367",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T13:42:50.143017",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T13:42:50.148940",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 1.0,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 1.02,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 0.99,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T13:42:50.155451",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T13:42:50.162994",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "Night/Sleep Window (02:45 IST)",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-6E79AA",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-11T13:42:50.215658",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    },
+    "INC-9E9B83": {
+      "incident_id": "INC-9E9B83",
+      "incident_type": "WATER_LEAK_SURGE",
+      "building_id": "BLDG-04",
+      "building_name": "Satish Dhawan Hostel & Lab Block",
+      "title": "Critical Night Flow Surge in Satish Dhawan Block",
+      "details": "Flow sustained at 64.2 L/min during 01:00-05:00 sleep window.",
+      "severity": "HIGH",
+      "status": "RESOLVED_VERIFIED",
+      "created_at": "2026-10-11T13:58:52.403551",
+      "investigation_log": [
+        {
+          "timestamp": "2026-10-11T13:58:52.408562",
+          "tool": "check_weather",
+          "query": {
+            "location": "Campus-North"
+          },
+          "result": {
+            "location": "Campus-North",
+            "rainfall_last_12h_mm": 0.0,
+            "rain_forecast_next_24h_mm": 2.0,
+            "temperature_celsius": 28.5,
+            "irrigation_active": false,
+            "verdict": "CLEAR_WEATHER",
+            "analysis": "No rainfall detected in the past 12 hours. Scheduled irrigation valves are OFF. Flow surge cannot be attributed to weather or landscaping systems."
+          },
+          "reasoning": "Checking if external rain or automated irrigation accounts for flow increase."
+        },
+        {
+          "timestamp": "2026-10-11T13:58:52.414250",
+          "tool": "check_peer_baselines",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "target_building_id": "BLDG-04",
+            "target_surge_ratio": 3.49,
+            "peers": [
+              {
+                "building_id": "BLDG-01",
+                "ratio": 1.0,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-02",
+                "ratio": 0.98,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-03",
+                "ratio": 1.02,
+                "status": "NORMAL"
+              },
+              {
+                "building_id": "BLDG-05",
+                "ratio": 0.99,
+                "status": "NORMAL"
+              }
+            ],
+            "verdict": "ISOLATED_ANOMALY",
+            "analysis": "All peer buildings show normal night flow ratios (0.95x - 1.05x). Only BLDG-04 shows a severe surge. This confirms a localized physical pipe breach rather than campus-wide supply fluctuation."
+          },
+          "reasoning": "Comparing against peer campus buildings to verify if surge is localized."
+        },
+        {
+          "timestamp": "2026-10-11T13:58:52.420194",
+          "tool": "check_maintenance_history",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "pipe_material": "GI Schedule 40 (Installed 2017)",
+            "critical_fittings": "Basement Riser & Sump Pump Line B",
+            "previous_tickets": [
+              {
+                "date": "2026-08-15",
+                "component": "Ground Floor Restroom Valve",
+                "status": "Replaced gasket",
+                "priority": "P3"
+              },
+              {
+                "date": "2026-09-02",
+                "component": "Basement Secondary Riser Joint",
+                "status": "Identified micro-fissure; flagged for overhaul",
+                "priority": "P2"
+              }
+            ],
+            "recurrence_risk": "HIGH",
+            "verdict": "KNOWN_VULNERABILITY",
+            "analysis": "BLDG-04 Basement Secondary Riser was flagged with minor fissure on Sept 2 without full replacement. High probability of joint rupture at high nocturnal pump pressure."
+          },
+          "reasoning": "Querying asset records for prior vulnerabilities or micro-fissures in pipe fittings."
+        },
+        {
+          "timestamp": "2026-10-11T13:58:52.425818",
+          "tool": "check_occupancy",
+          "query": {
+            "building_id": "BLDG-04"
+          },
+          "result": {
+            "building_id": "BLDG-04",
+            "current_time_slot": "Night/Sleep Window (02:45 IST)",
+            "is_exam_period": false,
+            "scheduled_night_labs": 0,
+            "estimated_active_occupants": 8,
+            "verdict": "NO_UNUSUAL_OCCUPANCY",
+            "analysis": "Normal sleeping hours in hostel wing. No all-night robotics lab sessions registered. Expected human consumption should not exceed 20 L/min."
+          },
+          "reasoning": "Cross-referencing building occupancy schedule to rule out authorized night activities."
+        }
+      ],
+      "work_order_id": "WO-10D6E2",
+      "outcome": {
+        "verified": true,
+        "status": "VERIFIED_AND_CLOSED",
+        "measured_flow_lpm": 18.2,
+        "baseline_lpm": 18.4,
+        "surge_ratio": 0.99,
+        "liters_saved_daily": 66240,
+        "liters_saved_monthly": 1987200,
+        "carbon_offset_kg_co2e_monthly": 592.2,
+        "verified_at": "2026-10-11T13:58:52.449123",
+        "summary": "SUCCESSFULLY VERIFIED: Night flow restored to 18.2 L/min (Baseline: 18.4 L/min). Verified Water Savings: 66,240 Liters/day (1,987,200 L/month)."
+      },
+      "telemetry_alert": {
+        "building_id": "BLDG-04",
+        "building_name": "Satish Dhawan Hostel & Lab Block",
+        "flow_rate_lpm": 64.2,
+        "baseline_lpm": 18.4,
+        "timestamp": "02:45:00 IST",
+        "spike_multiplier": 3.49
+      },
+      "escalation_reason": "VERIFICATION REJECTED: Current night flow is 61.8 L/min (3.36x baseline of 18.4 L/min). Physical water telemetry confirms leak is STILL ACTIVE despite technician completion claim."
+    }
+  },
+  "work_orders": {
+    "WO-C53150": {
+      "work_order_id": "WO-C53150",
+      "incident_id": "INC-D25CFB",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Secondary Riser / Sump Feed Valve Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Secondary Riser / Sump Feed Valve Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by the local deterministic agent (4 local tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETION_REPORTED",
+      "created_at": "2026-10-08T12:40:53.705357",
+      "completion_reported_at": "2026-10-08T12:40:54.706660",
+      "verification_status": "PENDING",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-F86C94": {
+      "work_order_id": "WO-F86C94",
+      "incident_id": "INC-E6631C",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Secondary Riser / Sump Feed Valve Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Secondary Riser / Sump Feed Valve Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by the local deterministic agent (4 local tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETION_REPORTED",
+      "created_at": "2026-10-08T12:41:29.603879",
+      "completion_reported_at": "2026-10-08T12:41:30.606009",
+      "verification_status": "PENDING",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-0FCED9": {
+      "work_order_id": "WO-0FCED9",
+      "incident_id": "INC-77E92D",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Secondary Riser / Sump Feed Valve Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Secondary Riser / Sump Feed Valve Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by the local deterministic agent (4 local tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETION_REPORTED",
+      "created_at": "2026-10-08T14:07:25.690541",
+      "completion_reported_at": "2026-10-08T14:07:26.694634",
+      "verification_status": "PENDING",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-A5A415": {
+      "work_order_id": "WO-A5A415",
+      "incident_id": "INC-35457B",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Secondary Riser / Sump Feed Valve Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Secondary Riser / Sump Feed Valve Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by the local deterministic agent (4 local tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "DISPATCHED",
+      "created_at": "2026-10-08T14:12:01.510356",
+      "completion_reported_at": null,
+      "verification_status": "PENDING"
+    },
+    "WO-0AAFBA": {
+      "work_order_id": "WO-0AAFBA",
+      "incident_id": "INC-E04A98",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Secondary Riser / Sump Feed Valve Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Secondary Riser / Sump Feed Valve Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by the local deterministic agent (4 local tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "DISPATCHED",
+      "created_at": "2026-10-08T14:32:09.372539",
+      "completion_reported_at": null,
+      "verification_status": "PENDING"
+    },
+    "WO-8D22AF": {
+      "work_order_id": "WO-8D22AF",
+      "incident_id": "INC-143A9E",
+      "title": "[P1 URGENT] Water Leak Repair: N/A",
+      "instructions": "Investigate and isolate suspected rupture at N/A.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by the local deterministic agent (4 local tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETION_REPORTED",
+      "created_at": "2026-10-11T11:28:01.588567",
+      "completion_reported_at": "2026-10-11T11:28:02.614762",
+      "verification_status": "PENDING",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-337D65": {
+      "work_order_id": "WO-337D65",
+      "incident_id": "INC-08AF71",
+      "title": "[P1 URGENT] Water Leak Repair: N/A",
+      "instructions": "Investigate and isolate suspected rupture at N/A.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by the local deterministic agent (4 local tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETION_REPORTED",
+      "created_at": "2026-10-11T11:36:48.905240",
+      "completion_reported_at": "2026-10-11T11:36:49.910014",
+      "verification_status": "PENDING",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-45C663": {
+      "work_order_id": "WO-45C663",
+      "incident_id": "INC-785246",
+      "title": "[P1 URGENT] Water Leak Repair: N/A",
+      "instructions": "Investigate and isolate suspected rupture at N/A.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by the local deterministic agent (4 local tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETION_REPORTED",
+      "created_at": "2026-10-11T11:49:55.710991",
+      "completion_reported_at": "2026-10-11T11:49:56.722240",
+      "verification_status": "PENDING",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-87A65D": {
+      "work_order_id": "WO-87A65D",
+      "incident_id": "INC-2A66CB",
+      "title": "[P1 URGENT] Water Leak Repair: N/A",
+      "instructions": "Investigate and isolate suspected rupture at N/A.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by the local deterministic agent (4 local tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETION_REPORTED",
+      "created_at": "2026-10-11T12:02:39.084478",
+      "completion_reported_at": "2026-10-11T12:02:40.091415",
+      "verification_status": "PENDING",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-E7EB94": {
+      "work_order_id": "WO-E7EB94",
+      "incident_id": "INC-DB3A02",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Riser & Sump Pump Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Riser & Sump Pump Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by Local Resilience Agent (4 tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETED",
+      "created_at": "2026-10-11T12:37:12.434132",
+      "completion_reported_at": "2026-10-11T12:37:12.439132",
+      "verification_status": "PASSED",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-F34F7A": {
+      "work_order_id": "WO-F34F7A",
+      "incident_id": "INC-3D7D57",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Riser & Sump Pump Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Riser & Sump Pump Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by Local Resilience Agent (4 tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETED",
+      "created_at": "2026-10-11T12:47:45.747412",
+      "completion_reported_at": "2026-10-11T12:47:45.753949",
+      "verification_status": "PASSED",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-89F566": {
+      "work_order_id": "WO-89F566",
+      "incident_id": "INC-871770",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Riser & Sump Pump Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Riser & Sump Pump Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by Local Resilience Agent (4 tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETED",
+      "created_at": "2026-10-11T13:04:04.844402",
+      "completion_reported_at": "2026-10-11T13:04:04.849418",
+      "verification_status": "PASSED",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-6E79AA": {
+      "work_order_id": "WO-6E79AA",
+      "incident_id": "INC-DF630A",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Riser & Sump Pump Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Riser & Sump Pump Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by Local Resilience Agent (4 tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETED",
+      "created_at": "2026-10-11T13:42:50.176678",
+      "completion_reported_at": "2026-10-11T13:42:50.187359",
+      "verification_status": "PASSED",
+      "notes": "Replaced rubber washer on secondary outlet."
+    },
+    "WO-10D6E2": {
+      "work_order_id": "WO-10D6E2",
+      "incident_id": "INC-9E9B83",
+      "title": "[P1 URGENT] Water Leak Repair: Basement Riser & Sump Pump Line B",
+      "instructions": "Investigate and isolate suspected rupture at Basement Riser & Sump Pump Line B.\nObserved Night Leak Rate: 45.8 L/min.\nDaily Waste Risk: 65,952 Liters/day.\nDiagnosis: Localized joint failure confirmed by Local Resilience Agent (4 tools checked).\nProtocol: Shut Isolation Valve B-2, replace 2-inch GI coupling with reinforced flange, pressure test to 45 PSI.",
+      "priority": "P1",
+      "assigned_to": {
+        "id": "TECH-01",
+        "name": "Rajesh Kumar",
+        "role": "Senior Plumber",
+        "phone": "+91-98765-43210",
+        "status": "AVAILABLE"
+      },
+      "status": "COMPLETED",
+      "created_at": "2026-10-11T13:58:52.432497",
+      "completion_reported_at": "2026-10-11T13:58:52.437497",
+      "verification_status": "PASSED",
+      "notes": "Replaced rubber washer on secondary outlet."
+    }
+  }
+}
