@@ -4,15 +4,15 @@ __pycache__/
 *$py.class
 *.so
 
-# C extensions
-build/
+# C extensions / build artifacts
+/build/
 develop-eggs/
-dist/
+/dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -20,6 +20,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+!frontend/src/lib/
 
 # Virtual Environments
 .venv/
